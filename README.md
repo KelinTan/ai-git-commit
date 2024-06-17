@@ -8,6 +8,8 @@
 # 使用
 很简单，调用即可。
 
+> 注意环境变量设置不同平台的KEY,如阿里的DASHSCOPE_API_KEY、智谱的ZHIPU_API_KEY等等，瞅下代码
+
 自定义了一个alias来快速使用：
 
 ![image](https://github.com/KelinTan/ai-git-commit/assets/23694073/f122013f-502b-4853-9fcc-6a82c7d422d6)
