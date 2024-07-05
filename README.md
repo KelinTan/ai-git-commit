@@ -16,7 +16,9 @@
 
 
 使用如截图：
-![image](https://github.com/KelinTan/ai-git-commit/assets/23694073/d4b4a160-ea65-4b93-a60c-226d2313f48e)
+
+![image](https://github.com/KelinTan/ai-git-commit/assets/23694073/41341eb0-598a-4445-af9f-ce033809dda6)
+
 
 # 一些配置
 ![image](https://github.com/KelinTan/ai-git-commit/assets/23694073/059690c2-fb65-4084-b69d-587db9b8ce6f)
