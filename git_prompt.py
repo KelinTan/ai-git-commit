@@ -141,16 +141,22 @@ def main(model="zhipu", style="standard"):
         result = invoke_openai(git_prompt)
     else:
         result = invoke_zhipu(git_prompt)
-    commit_message = result.strip()
-    commit_command = generate_commit_cmd(commit_message)
-    print(f"生成的commit message为：{commit_message}")
+    default_commit_message = result.strip()
+    print(f"AI Generated commit message: {default_commit_message}")
     try:
-        input(f"是否执行以上命令？{commit_command}，按回车键执行，按Ctrl+C取消")
+        new_commit_message = input(
+            "Please input your commit message or press Enter to use the default message or Ctrl+C to cancel:\n"
+        )
+        commit_message = (
+            new_commit_message.strip() if new_commit_message else default_commit_message
+        )
+        commit_command = generate_commit_cmd(commit_message)
+        print("Run command: ", commit_command)
         subprocess.check_output(commit_command, shell=True)
     except BaseException as e:
         if isinstance(e, KeyboardInterrupt):
             print("\n")
-            print("已取消")
+            print("Cancel commit")
 
 
 if __name__ == "__main__":
@@ -172,4 +178,3 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     main(args.model, args.style)
-    pass
