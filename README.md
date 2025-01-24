@@ -23,7 +23,7 @@
 # 一些配置
 ![image](https://github.com/KelinTan/ai-git-commit/assets/23694073/059690c2-fb65-4084-b69d-587db9b8ce6f)
 
---model 切换不同平台，支持baidu、zhipu、ali、openai
+--model 切换不同平台，支持baidu、zhipu、ali、openai、deepseek
 
 --style 切换 git 风格，普通的style或git-commit规范
 
@@ -35,6 +35,7 @@
 |  zhipu   | 4.0效果好但太贵🥰，3.0😂        |
 |  baidu   | 🙄        |
 |  ali   | 平替，正在用😄        |
+| deepseek   | 白嫖体验中        |
 
 # 一些小问题（~~不想修~~）
 
