@@ -12,6 +12,21 @@ import argparse
 
 SYSTEM_PROMPT = "You are a software engineer, and you are working on a project. You have just finished writing some code and are about to commit it to the code repository. Please write a commit message based on the diff of the code you have written."
 
+def invoke_deepseek(prompt:str):
+    import openai
+    from openai.types.chat.chat_completion import ChatCompletion
+
+    print("Using model: DeepSeek-V3")
+    openai.api_key = os.getenv("DEEPSEEK_API_KEY")
+    openai.base_url = "https://api.deepseek.com"
+    response: ChatCompletion = openai.chat.completions.create(
+        model="deepseek-chat",
+        # model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
+    )
+    return response.choices[0].message.content
 
 def invoke_dashscope(prompt: str):
     import dashscope
@@ -21,9 +36,9 @@ def invoke_dashscope(prompt: str):
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": prompt},
     ]
-
+    print("Using model: ", dashscope.Generation.Models.qwen_plus)
     response = dashscope.Generation.call(
-        dashscope.Generation.Models.qwen_turbo,
+        dashscope.Generation.Models.qwen_plus,
         messages=messages,
         result_format="message",
     )
@@ -65,11 +80,14 @@ def invoke_baidu(prompt: str):
 
 def invoke_zhipu(prompt: str):
     import zhipuai
+    zhipu_model = "glm-4-plus"
+    # zhipu_model = "GLM-3-turbo"
+
+    print("Using model: ", zhipu_model)
 
     zhipuai.api_key = os.getenv("ZHIPU_API_KEY")
     response = zhipuai.model_api.invoke(
-        # model="GLM-4",
-        model="glm-3-turbo",
+        model=zhipu_model,
         prompt=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt},
@@ -112,8 +130,8 @@ def build_prompt(message: str, style: str):
         return f"""
         {message}
         ----------------------------------------
-        参考 git官方对diff结果的解释，根据上述 Git Diff的结果，请生成简短的总结性的英文git commit message,遵循 git commit message 的规范，以feat:、fix:、docs:、style:、refactor:、test:、chore:、revert:开头，比如：fix: Fix bug \n,仅关心变动的代码
-        返回的信息不需要前后说明文字，不要带引号，长度不超过5个单词，只要一句话即可。
+        参考 git官方对diff结果的解释，根据上述 Git Diff的结果，请生成简短的总结性的英文git commit message,遵循 git commit message 的规范，以feat:、fix:、docs:、style:、refactor:、test:、chore:、revert:开头，比如：fix: fix bug \n,仅关心变动的代码
+        返回的信息不需要前后说明文字，不要带引号，长度不超过5个单词，只要一句总结性的话即可，不需要多种类型的feat/fix等，只需要一种即可
         """
     return f"""
 {message}
@@ -139,9 +157,12 @@ def main(model="zhipu", style="standard"):
         result = invoke_dashscope(git_prompt)
     elif model == "openai":
         result = invoke_openai(git_prompt)
+    elif model =="deepseek":
+        result = invoke_deepseek(git_prompt)
     else:
         result = invoke_zhipu(git_prompt)
-    default_commit_message = result.strip()
+    # 移除前后空格和前后的引号
+    default_commit_message = result.strip().strip('"')
     print(f"AI Generated commit message: {default_commit_message}")
     try:
         new_commit_message = input(
@@ -164,7 +185,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        help="模型名称，可选值为 zhipu/baidu/dashscope",
+        help="模型名称，可选值为 zhipu/baidu/dashscope/deepseek",
         default="dashscope",
         required=False,
     )
@@ -177,4 +198,5 @@ if __name__ == "__main__":
         required=False,
     )
     args = parser.parse_args()
+    print(f"Using model: {args.model}")
     main(args.model, args.style)
